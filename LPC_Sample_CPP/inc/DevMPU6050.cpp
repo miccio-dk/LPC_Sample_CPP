@@ -7,7 +7,7 @@
 
 #include <DevMPU6050.h>
 
-#define len(x) (sizeof(x)-1)
+#define _2BtoINT(x,y) ((((int16_t)x) << 8) | y)
 
 Dev_MPU6050::Dev_MPU6050() {
 	address = MPU6050_DEFAULT_ADDRESS;
@@ -63,12 +63,12 @@ void Dev_MPU6050::getMotion(int16_t* ax, int16_t* ay, int16_t* az, int16_t* gx,
 	Chip_I2C_MasterSend(i2cDev, MPU6050_DEFAULT_ADDRESS, temp_data, 1);
 	Chip_I2C_MasterRead(i2cDev, MPU6050_DEFAULT_ADDRESS, buffer, 14);
 
-	*ax = (((int16_t)buffer[0]) << 8) | buffer[1];
-	*ay = (((int16_t)buffer[2]) << 8) | buffer[3];
-	*az = (((int16_t)buffer[4]) << 8) | buffer[5];
-	*gx = (((int16_t)buffer[8]) << 8) | buffer[9];
-	*gy = (((int16_t)buffer[10]) << 8) | buffer[11];
-	*gz = (((int16_t)buffer[12]) << 8) | buffer[13];
+	*ax = _2BtoINT(buffer[0], buffer[1]);
+	*ay = _2BtoINT(buffer[2], buffer[3]);
+	*az = _2BtoINT(buffer[4], buffer[5]);
+	*gx = _2BtoINT(buffer[8], buffer[9]);
+	*gy = _2BtoINT(buffer[10], buffer[11]);
+	*gz = _2BtoINT(buffer[12], buffer[13]);
 
 	if(serialDebug) {
 		const char txt[] = "- Acceleration X, Y, Z:\t%-8d, %-8d, %-8d\n"
@@ -83,9 +83,9 @@ void Dev_MPU6050::getAcceleration(int16_t* x, int16_t* y, int16_t* z) {
 	Chip_I2C_MasterSend(i2cDev, MPU6050_DEFAULT_ADDRESS, temp_data, 1);
 	Chip_I2C_MasterRead(i2cDev, MPU6050_DEFAULT_ADDRESS, buffer, 6);
 
-	*x = (((int16_t)buffer[0]) << 8) | buffer[1];
-	*y = (((int16_t)buffer[2]) << 8) | buffer[3];
-	*z = (((int16_t)buffer[4]) << 8) | buffer[5];
+	*x = _2BtoINT(buffer[0], buffer[1]);
+	*y = _2BtoINT(buffer[2], buffer[3]);
+	*z = _2BtoINT(buffer[4], buffer[5]);
 
 	if(serialDebug) {
 		const char txt[] = "- Acceleration X, Y, Z:\t%-8d, %-8d, %-8d\n";
@@ -111,9 +111,9 @@ void Dev_MPU6050::getRotation(int16_t* x, int16_t* y, int16_t* z) {
 	Chip_I2C_MasterSend(i2cDev, MPU6050_DEFAULT_ADDRESS, temp_data, 1);
 	Chip_I2C_MasterRead(i2cDev, MPU6050_DEFAULT_ADDRESS, buffer, 6);
 
-	*x = (((int16_t)buffer[0]) << 8) | buffer[1];
-	*y = (((int16_t)buffer[2]) << 8) | buffer[3];
-	*z = (((int16_t)buffer[4]) << 8) | buffer[5];
+	*x = _2BtoINT(buffer[0], buffer[1]);
+	*y = _2BtoINT(buffer[2], buffer[3]);
+	*z = _2BtoINT(buffer[4], buffer[5]);
 
 	if(serialDebug) {
 		const char txt[] = "- Rotation X, Y, Z:\t\t%-8d, %-8d, %-8d\n";
@@ -175,7 +175,7 @@ void Dev_MPU6050::i2c_init_pinmux(void)
 int16_t Dev_MPU6050::readReg2B(uint8_t reg) {
 	Chip_I2C_MasterSend(i2cDev, MPU6050_DEFAULT_ADDRESS, &reg, 1);
 	Chip_I2C_MasterRead(i2cDev, MPU6050_DEFAULT_ADDRESS, buffer, 2);
-	return (((int16_t)buffer[0]) << 8) | buffer[1];
+	return _2BtoINT(buffer[0], buffer[1]);
 }
 
 
