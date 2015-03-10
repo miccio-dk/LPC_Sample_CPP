@@ -12,7 +12,6 @@
 Dev_MPU6050::Dev_MPU6050() {
 	address = MPU6050_DEFAULT_ADDRESS;
 	serialDebug = false;
-	i2cDev = DEFAULT_I2C;
 	i2c_init_pinmux();
 	i2c_app_init(DEFAULT_I2C, I2C_DEFAULT_SPEED);
 }
@@ -20,7 +19,6 @@ Dev_MPU6050::Dev_MPU6050() {
 Dev_MPU6050::Dev_MPU6050(uint8_t _address) {
 	address = _address;
 	serialDebug = false;
-	i2cDev = DEFAULT_I2C;
 	i2c_init_pinmux();
 	i2c_app_init(DEFAULT_I2C, I2C_DEFAULT_SPEED);
 }
@@ -29,7 +27,6 @@ Dev_MPU6050::Dev_MPU6050(uint8_t _address, RINGBUFF_T *_txring) {
 	address = _address;
 	serialDebug = true;
 	txring = _txring;
-	i2cDev = DEFAULT_I2C;
 	i2c_init_pinmux();
 	i2c_app_init(DEFAULT_I2C, I2C_DEFAULT_SPEED);
 }
@@ -43,11 +40,11 @@ void Dev_MPU6050::initialize() {
 	// TODO set full ranges for accel. and gyro (+-2g and and +-250°/s by default)
 	// TODO change clock source
 	uint8_t pwr_mgmt_data[] = {MPU6050_RA_PWR_MGMT_1, 0};
-	Chip_I2C_MasterSend(i2cDev, MPU6050_DEFAULT_ADDRESS, pwr_mgmt_data, 2);
+	Chip_I2C_MasterSend(DEFAULT_I2C, MPU6050_DEFAULT_ADDRESS, pwr_mgmt_data, 2);
 
 	if(serialDebug) {
 		const char txt[] = "- MPU6050 initialized\n- Sleep mode disabled\n";
-		Chip_UART_SendRB(LPC_USART, txring, txt, len(txt));
+		Chip_UART_SendRB(LPC_USART, txring, txt, sizeof(txt)-1);
 	}
 }
 
@@ -60,8 +57,8 @@ void Dev_MPU6050::getMotion(int16_t* ax, int16_t* ay, int16_t* az, int16_t* gx,
 		int16_t* gy, int16_t* gz) {
 
 	uint8_t temp_data[] = {MPU6050_RA_ACCEL_XOUT_H};
-	Chip_I2C_MasterSend(i2cDev, MPU6050_DEFAULT_ADDRESS, temp_data, 1);
-	Chip_I2C_MasterRead(i2cDev, MPU6050_DEFAULT_ADDRESS, buffer, 14);
+	Chip_I2C_MasterSend(DEFAULT_I2C, MPU6050_DEFAULT_ADDRESS, temp_data, 1);
+	Chip_I2C_MasterRead(DEFAULT_I2C, MPU6050_DEFAULT_ADDRESS, buffer, 14);
 
 	*ax = _2BtoINT(buffer[0], buffer[1]);
 	*ay = _2BtoINT(buffer[2], buffer[3]);
@@ -80,8 +77,8 @@ void Dev_MPU6050::getMotion(int16_t* ax, int16_t* ay, int16_t* az, int16_t* gx,
 
 void Dev_MPU6050::getAcceleration(int16_t* x, int16_t* y, int16_t* z) {
 	uint8_t temp_data[] = {MPU6050_RA_ACCEL_XOUT_H};
-	Chip_I2C_MasterSend(i2cDev, MPU6050_DEFAULT_ADDRESS, temp_data, 1);
-	Chip_I2C_MasterRead(i2cDev, MPU6050_DEFAULT_ADDRESS, buffer, 6);
+	Chip_I2C_MasterSend(DEFAULT_I2C, MPU6050_DEFAULT_ADDRESS, temp_data, 1);
+	Chip_I2C_MasterRead(DEFAULT_I2C, MPU6050_DEFAULT_ADDRESS, buffer, 6);
 
 	*x = _2BtoINT(buffer[0], buffer[1]);
 	*y = _2BtoINT(buffer[2], buffer[3]);
@@ -108,8 +105,8 @@ int16_t Dev_MPU6050::getAccelerationZ() {
 
 void Dev_MPU6050::getRotation(int16_t* x, int16_t* y, int16_t* z) {
 	uint8_t temp_data[] = {MPU6050_RA_GYRO_XOUT_H};
-	Chip_I2C_MasterSend(i2cDev, MPU6050_DEFAULT_ADDRESS, temp_data, 1);
-	Chip_I2C_MasterRead(i2cDev, MPU6050_DEFAULT_ADDRESS, buffer, 6);
+	Chip_I2C_MasterSend(DEFAULT_I2C, MPU6050_DEFAULT_ADDRESS, temp_data, 1);
+	Chip_I2C_MasterRead(DEFAULT_I2C, MPU6050_DEFAULT_ADDRESS, buffer, 6);
 
 	*x = _2BtoINT(buffer[0], buffer[1]);
 	*y = _2BtoINT(buffer[2], buffer[3]);
@@ -173,8 +170,8 @@ void Dev_MPU6050::i2c_init_pinmux(void)
 }
 
 int16_t Dev_MPU6050::readReg2B(uint8_t reg) {
-	Chip_I2C_MasterSend(i2cDev, MPU6050_DEFAULT_ADDRESS, &reg, 1);
-	Chip_I2C_MasterRead(i2cDev, MPU6050_DEFAULT_ADDRESS, buffer, 2);
+	Chip_I2C_MasterSend(DEFAULT_I2C, MPU6050_DEFAULT_ADDRESS, &reg, 1);
+	Chip_I2C_MasterRead(DEFAULT_I2C, MPU6050_DEFAULT_ADDRESS, buffer, 2);
 	return _2BtoINT(buffer[0], buffer[1]);
 }
 
@@ -182,11 +179,11 @@ int16_t Dev_MPU6050::readReg2B(uint8_t reg) {
 extern "C" {
 
 void I2C_IRQHandler(void) {
-	if (Chip_I2C_IsMasterActive(I2C0)) {
-			Chip_I2C_MasterStateHandler(I2C0);
+	if (Chip_I2C_IsMasterActive(DEFAULT_I2C)) {
+			Chip_I2C_MasterStateHandler(DEFAULT_I2C);
 		}
 		else {
-			Chip_I2C_SlaveStateHandler(I2C0);
+			Chip_I2C_SlaveStateHandler(DEFAULT_I2C);
 		}
 }
 }

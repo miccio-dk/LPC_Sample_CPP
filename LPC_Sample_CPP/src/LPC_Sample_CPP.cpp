@@ -12,6 +12,7 @@
 #include "board.h"
 
 #include "DevMPU6050.h"
+#include "DevMA3P12.h"
 #include "string.h"
 #include <stdlib.h>
 

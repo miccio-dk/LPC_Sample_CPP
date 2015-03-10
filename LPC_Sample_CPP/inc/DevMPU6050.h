@@ -66,7 +66,6 @@ private:
 	bool serialDebug;
 	RINGBUFF_T *txring;
 	int mode_poll;
-	I2C_ID_T i2cDev;
 
 	void i2c_set_mode(I2C_ID_T id, int polling);
 	void i2c_app_init(I2C_ID_T id, int speed);
