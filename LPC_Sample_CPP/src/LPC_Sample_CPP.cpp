@@ -108,6 +108,10 @@ int main(void) {
 		if (key == 'i') {
 			device.getMotion(&accX, &accY, &accZ, &girX, &girY, &girZ);
 			temp = device.getTemperature();
+
+			// I can share the UART :D
+			temp = temp/340 + 37;
+
 		}
 	}
 

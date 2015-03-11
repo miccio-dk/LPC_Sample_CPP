@@ -34,6 +34,7 @@
 #define MPU6050_RA_GYRO_YOUT_L      0x46
 #define MPU6050_RA_GYRO_ZOUT_H      0x47
 #define MPU6050_RA_GYRO_ZOUT_L      0x48
+#define MPU6050_RA_WHO_AM_I         0x75
 
 class Dev_MPU6050 {
 public:
@@ -70,7 +71,7 @@ private:
 	void i2c_set_mode(I2C_ID_T id, int polling);
 	void i2c_app_init(I2C_ID_T id, int speed);
 	void i2c_init_pinmux(void);
-	int16_t readReg2B(uint8_t reg);
+	int16_t readReg2B(uint8_t reg, const char *dbg_txt);
 };
 
 #endif /* DEVMPU6050_H_ */
