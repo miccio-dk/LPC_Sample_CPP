@@ -29,7 +29,10 @@ public:
 	int16_t getPositionDeg();
 	int16_t getTurnsNum();
 
-
+	uint8_t getPin() const;
+	uint8_t getPort() const;
+	void setPosition(uint16_t position);
+	void setTurns(int16_t turns);
 
 private:
 	uint8_t port;
