@@ -45,14 +45,23 @@ static void Init_UART_PinMux(void)
 
 
 /*****************************************************************************
- * Public functions
+ * Public functions/variables declarations
  ****************************************************************************/
+
+DevMPU6050 device1(0x68, &txring);
+DevMA3P12 device2(0, 3, &txring);
 
 // C++ handlers require C linkage - see:
 // http://www.lpcware.com/content/faq/lpcxpresso/startup-code-interrupt-handlers
 #ifdef __cplusplus /* If this is a C++ compiler, use C linkage */
 extern "C" {
 #endif
+
+
+void call_timerHandler(DevMA3P12* p);
+void SysTick_Handler(void) {
+	call_timerHandler(&device2);
+}
 
 void UART_IRQHandler(void) {
 	Chip_UART_IRQRBHandler(LPC_USART, &rxring, &txring);
@@ -98,16 +107,19 @@ int main(void) {
 	NVIC_SetPriority(UART0_IRQn, 1);
 	NVIC_EnableIRQ(UART0_IRQn);
 
+	device1.initialize();
+	device2.initialize();
 	uint8_t key = 0;
 	int16_t accX, accY, accZ, temp, girX, girY, girZ;
-	Dev_MPU6050 device(0x68, &txring);
-	device.initialize();
+
+
+
 
 	while (key != 'q') {
 		Chip_UART_ReadRB(LPC_USART, &rxring, &key, 1);
 		if (key == 'i') {
-			device.getMotion(&accX, &accY, &accZ, &girX, &girY, &girZ);
-			temp = device.getTemperature();
+			device1.getMotion(&accX, &accY, &accZ, &girX, &girY, &girZ);
+			temp = device1.getTemperature();
 
 			// I can share the UART :D
 			temp = temp/340 + 37;
