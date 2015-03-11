@@ -24,15 +24,12 @@ public:
 	DevMA3P12(uint8_t port, uint8_t pin, RINGBUFF_T *_txring);
 	virtual ~DevMA3P12();
 
-	void initialize();
-	int16_t getPositionRaw();
-	int16_t getPositionDeg();
-	int16_t getTurnsNum();
+	void initialize(void);
+	int16_t getPositionRaw(void);
+	int16_t getPositionDeg(void);
+	int16_t getTurnsNum(void);
 
-	uint8_t getPin() const;
-	uint8_t getPort() const;
-	void setPosition(uint16_t position);
-	void setTurns(int16_t turns);
+	void timerHandler(void);
 
 private:
 	uint8_t port;
@@ -43,7 +40,13 @@ private:
 	bool serialDebug;
 	RINGBUFF_T *txring;
 
-	void pinint_setup(void);
+	bool currState;
+	bool prevState;
+	int16_t uS_on;
+	int16_t uS_off;
+
+	void pin_setup(void);
+	void var_init(void);
 
 };
 
