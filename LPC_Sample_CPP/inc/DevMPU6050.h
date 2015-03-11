@@ -36,12 +36,12 @@
 #define MPU6050_RA_GYRO_ZOUT_L      0x48
 #define MPU6050_RA_WHO_AM_I         0x75
 
-class Dev_MPU6050 {
+class DevMPU6050 {
 public:
-	Dev_MPU6050();
-	Dev_MPU6050(uint8_t _address);
-	Dev_MPU6050(uint8_t _address, RINGBUFF_T *_txring);
-	virtual ~Dev_MPU6050();
+	DevMPU6050();
+	DevMPU6050(uint8_t _address);
+	DevMPU6050(uint8_t _address, RINGBUFF_T *_txring);
+	virtual ~DevMPU6050();
 
 	void initialize();
 	bool testConnection();
