@@ -109,29 +109,13 @@ void DevMA3P12::timerHandler() {
 
 
 
-
-
 extern "C" {
 	// wrapper function to call call member functions from C-linked code
 	// this avoids the risk of having to use global variables! - see:
 	// https://isocpp.org/wiki/faq/mixing-c-and-cpp
 
-	/*void call_setPosition(DevMA3P12* p, uint16_t position)
-	{ return p->setPosition(position); }
-
-	void call_setTurns(DevMA3P12* p, uint16_t turns)
-	{ return p->setTurns(turns); }
-
-	uint8_t call_getPin(DevMA3P12* p)
-	{ return p->getPin(); }
-
-	uint8_t call_getPort(DevMA3P12* p)
-	{ return p->getPort(); }*/
-
 	void call_timerHandler(DevMA3P12* p)
 	{ return p->timerHandler(); }
-
-
 
 }
 
