@@ -15,7 +15,6 @@
 #define MA3P12_DEFAULT_GPIO_PININT			3
 #define MA3P12_DEFAULT_GPIO_PININT_PORT		0
 #define MA3P12_DEFAULT_IOCON_PIN_ID			IOCON_PIO0_3
-#define MA3P12_RES							(0 /* TODO convertion ratio*/)
 
 class DevMA3P12 {
 public:
@@ -25,8 +24,7 @@ public:
 	virtual ~DevMA3P12();
 
 	void initialize(void);
-	int16_t getPositionRaw(void);
-	int16_t getPositionDeg(void);
+	int16_t getPosition(void);
 	int16_t getTurnsNum(void);
 
 	void timerHandler(void);
@@ -42,8 +40,8 @@ private:
 
 	bool currState;
 	bool prevState;
-	int16_t uS_on;
-	int16_t uS_off;
+	uint16_t uS_on;
+	uint16_t uS_off;
 
 	void pin_setup(void);
 	void var_init(void);

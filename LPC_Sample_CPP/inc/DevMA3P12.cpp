@@ -32,25 +32,34 @@ DevMA3P12::DevMA3P12(uint8_t _port, uint8_t _pin, RINGBUFF_T* _txring) {
 	var_init();
 }
 
-DevMA3P12::~DevMA3P12() {
-	// TODO Auto-generated destructor stub
-}
+DevMA3P12::~DevMA3P12() {}
 
 void DevMA3P12::initialize() {
 	pin_setup();
-	SysTick_Config(Chip_Clock_GetSystemClockRate()/1000000);
-	// TODO add init. code
+	SysTick_Config(Chip_Clock_GetSystemClockRate()/1E5);
+	NVIC_SetPriority(SysTick_IRQn, 0);
+
+	if(serialDebug) {
+		const char txt[] = "- MA3P12 initialized\n- SysTick interval enabled - 10us res.\n";
+		Chip_UART_SendRB(LPC_USART, txring, txt, sizeof(txt)-1);
+	}
 }
 
-int16_t DevMA3P12::getPositionRaw() {
+int16_t DevMA3P12::getPosition() {
+	if(serialDebug) {
+		const char txt[] = "- Position:\t%-8d°\n";
+		uint16_t len = sprintf(txt_buffer, txt, position);
+		Chip_UART_SendRB(LPC_USART, txring, txt_buffer, len);
+	}
 	return position;
 }
 
-int16_t DevMA3P12::getPositionDeg() {
-	return (position*MA3P12_RES);
-}
-
 int16_t DevMA3P12::getTurnsNum() {
+	if(serialDebug) {
+		const char txt[] = "- N. of turns:\t%-8d\n";
+		uint16_t len = sprintf(txt_buffer, txt, turns);
+		Chip_UART_SendRB(LPC_USART, txring, txt_buffer, len);
+	}
 	return turns;
 }
 
@@ -84,12 +93,15 @@ void DevMA3P12::var_init(void) {
 void DevMA3P12::timerHandler() {
 	currState = Chip_GPIO_GetPinState(LPC_GPIO, port, pin);
 	if(!prevState && currState) {			// rising edge
-		position = 20;			 			/* TODO formula */
+		position /= (uS_on+uS_off);			// formula 2nd half
 		uS_on = 1;
 		uS_off = 0;
-	} else if (currState && prevState) {	// high state
+	} else if (prevState && currState ) {	// high state
 		uS_on++;
-	} else if (!currState && !prevState) {	// low state
+	} else if (prevState && !currState) {	// falling edge
+		position = ((uint32_t)uS_on)*360;	// formula 1st half
+		uS_off++;
+	} else if (!prevState && !currState) {	// low state
 		uS_off++;
 	}
 	prevState = currState;
