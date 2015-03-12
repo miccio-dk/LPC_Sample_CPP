@@ -25,9 +25,7 @@ DevMPU6050::DevMPU6050(uint8_t _address, RINGBUFF_T *_txring) {
 	txring = _txring;
 }
 
-DevMPU6050::~DevMPU6050() {
-	// TODO Auto-generated destructor stub
-}
+DevMPU6050::~DevMPU6050() {}
 
 
 void DevMPU6050::initialize() {
