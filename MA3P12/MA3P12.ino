@@ -45,7 +45,7 @@ void loop() {
 
 		uint16_t tmp = map(analogRead(A0), 0, 1023, 0, 100);
 		if(tmp != positionPer) {
-			positionPer = tmp;
+			positionPer = constrain(tmp, 1, 99);
 			positionTime = ((long)positionPer*timePeriod)/100;
 		}
 	}
