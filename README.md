@@ -1,4 +1,4 @@
-# LPC_Sample_CPP
+# LPC Sample code (C++)
 read from MPU6050 Gyro + Accelerometer and MA3-P12 Magnetic shaft encoder using an LPC11C24
 
 ## Folder description
