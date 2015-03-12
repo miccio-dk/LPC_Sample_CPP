@@ -25,8 +25,8 @@
 STATIC RINGBUFF_T txring, rxring;
 
 /* Transmit and receive ring buffer sizes */
-#define UART_SRB_SIZE 128	/* Send */
-#define UART_RRB_SIZE 32	/* Receive */
+#define UART_SRB_SIZE 256	/* Send */
+#define UART_RRB_SIZE 16	/* Receive */
 
 /* Transmit and receive buffers */
 static uint8_t rxbuff[UART_RRB_SIZE], txbuff[UART_SRB_SIZE];
@@ -110,7 +110,7 @@ int main(void) {
 	device1.initialize();
 	device2.initialize();
 	uint8_t key = 0;
-	int16_t accX, accY, accZ, temp, girX, girY, girZ;
+	int16_t accX, accY, accZ, temp, girX, girY, girZ, pos;
 
 
 
@@ -121,9 +121,14 @@ int main(void) {
 			device1.getMotion(&accX, &accY, &accZ, &girX, &girY, &girZ);
 			temp = device1.getTemperature();
 
+
 			// I can share the UART :D
 			temp = temp/340 + 37;
+			char main_buffer[32];
+			uint16_t len = sprintf(main_buffer, "- Real temperature: %d *C\n", temp);
+			Chip_UART_SendRB(LPC_USART, &txring, main_buffer, len);
 
+			pos = device2.getPosition();
 		}
 	}
 
