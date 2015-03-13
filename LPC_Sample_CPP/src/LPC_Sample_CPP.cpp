@@ -59,9 +59,7 @@ extern "C" {
 #endif
 
 
-/* void call_timerHandler(DevMA3P12* p); */
 void SysTick_Handler(void) {
-	/* call_timerHandler(&device2); */
 	us_count++;
 }
 
