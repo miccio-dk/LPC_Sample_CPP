@@ -2,7 +2,7 @@
  * DevMA3P12.cpp
  *
  *  Created on: 09/mar/2015
- *      Author: Miccio
+ *      Author: Riccardo Miccini
  */
 
 #include <DevMA3P12.h>

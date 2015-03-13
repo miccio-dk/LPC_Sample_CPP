@@ -1,9 +1,9 @@
 /*
 ===============================================================================
  Name        : main.c
- Author      : $(author)
- Version     :
- Copyright   : $(copyright)
+ Author      : Riccardo Miccini
+ Version     : 0.02
+ Copyright   : Riccardo Miccini, 2015
  Description : main definition
 ===============================================================================
 */

@@ -2,7 +2,7 @@
  * DevMA3P12.h
  *
  *  Created on: 09/mar/2015
- *      Author: Miccio
+ *      Author: Riccardo Miccini
  */
 
 #ifndef DEVMA3P12_H_

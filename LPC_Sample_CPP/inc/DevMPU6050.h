@@ -2,7 +2,7 @@
  * DevMPU6050.h
  *
  *  Created on: 09/mar/2015
- *      Author: Miccio
+ *      Author: Riccardo Miccini
  */
 
 #ifndef DEVMPU6050_H_
