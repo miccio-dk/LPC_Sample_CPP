@@ -50,7 +50,7 @@ static void Init_UART_PinMux(void)
 
 DevMPU6050 device1(0x68, &txring);
 DevMA3P12 device2(0, 3, &txring);
-uint32_t us_count = 0;
+uint32_t ms_count = 0;
 
 // C++ handlers require C linkage - see:
 // http://www.lpcware.com/content/faq/lpcxpresso/startup-code-interrupt-handlers
@@ -60,7 +60,7 @@ extern "C" {
 
 
 void SysTick_Handler(void) {
-	us_count++;
+	ms_count++;
 }
 
 void UART_IRQHandler(void) {
@@ -115,7 +115,12 @@ int main(void) {
 	uint8_t key = 0;
 	int16_t accX, accY, accZ, temp, girX, girY, girZ, pos;
 
-
+	while(true) {
+		// .5s delay
+		uint32_t timeStart = ms_count;
+		while((ms_count-timeStart) < 500);
+		pos = device2.getPosition();
+	}
 
 
 	while (key != 'q') {

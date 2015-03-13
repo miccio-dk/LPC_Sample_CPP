@@ -16,7 +16,7 @@
 #define MA3P12_DEFAULT_GPIO_PININT_PORT		0
 #define MA3P12_DEFAULT_IOCON_PIN_ID			IOCON_PIO0_3
 
-extern uint32_t us_count;
+extern uint32_t ms_count;
 
 class DevMA3P12 {
 public:

@@ -36,11 +36,12 @@ DevMA3P12::~DevMA3P12() {}
 
 void DevMA3P12::initialize() {
 	pin_setup();
-	SysTick_Config(Chip_Clock_GetSystemClockRate()/1E6);
+	ms_count = 0;
+	SysTick_Config(SystemCoreClock/1000);
 	NVIC_SetPriority(SysTick_IRQn, 0);
 
 	if(serialDebug) {
-		const char txt[] = "- MA3P12 initialized\n- SysTick interval enabled - 1us res.\n";
+		const char txt[] = "- MA3P12 initialized\n- SysTick interval enabled - 1ms res.\n";
 		Chip_UART_SendRB(LPC_USART, txring, txt, sizeof(txt)-1);
 	}
 }
@@ -49,24 +50,26 @@ int16_t DevMA3P12::getPosition() {
 	uS_on = 0;
 	uS_off = 0;
 	position = 0;
+	prevState = true;
 
 	while(true) {
 		currState = Chip_GPIO_GetPinState(LPC_GPIO, port, pin);
 
 		// wait until rising edge
 		if(!prevState && currState && uS_on==0) {
-			uS_on = us_count;
+			// obtain us-level from systick - see http://micromouseusa.com/?p=296
+			uS_on = ms_count*1000 + (1000 - SysTick->VAL/48);
 		}
 
 		// wait until falling edge and track t_on
-		if(prevState && !currState && uS_on>0) {
-			uS_on = us_count - uS_on;
-			uS_off = us_count;
+		else if(prevState && !currState && uS_on>0) {
+			uS_on = ms_count*1000 + (1000 - SysTick->VAL/48) - uS_on;
+			uS_off = ms_count*1000 + (1000 - SysTick->VAL/48);
 		}
 
 		// wait until rising edge and track t_off
-		if(!prevState && currState && uS_on>0) {
-			uS_off = us_count - uS_off;
+		else if(!prevState && currState && uS_on>0) {
+			uS_off = ms_count*1000 + (1000 - SysTick->VAL/48) - uS_off;
 
 			// use datasheet formula for position
 			position = ((uS_on*4098) / (uS_on+uS_off)) -1;
@@ -82,8 +85,8 @@ int16_t DevMA3P12::getPosition() {
 	}
 
 	if(serialDebug) {
-		const char txt[] = "- Position:\t%-8d°\n";
-		uint16_t len = sprintf(txt_buffer, txt, position);
+		const char txt[] = "- Position (Ton, Toff):\t%8d\t%8lu\t%8lu\n";
+		uint16_t len = sprintf(txt_buffer, txt, position, uS_on, uS_off);
 		Chip_UART_SendRB(LPC_USART, txring, txt_buffer, len);
 	}
 	return position;
