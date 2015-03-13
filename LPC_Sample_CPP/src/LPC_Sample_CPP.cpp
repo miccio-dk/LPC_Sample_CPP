@@ -108,7 +108,10 @@ int main(void) {
 	NVIC_EnableIRQ(UART0_IRQn);
 
 	device1.initialize();
+	device1.testConnection();
+
 	device2.initialize();
+
 	uint8_t key = 0;
 	int16_t accX, accY, accZ, temp, girX, girY, girZ, pos;
 
