@@ -1,6 +1,6 @@
 # LPC Sample code (C++)
 Read from MPU6050 Gyro+Accelerometer and MA3-P12 Magnetic shaft encoder using an LPC11C24 board.
-Separate classes for each device. Encoder read continuously through SysTick interrupts.
+Separate classes for each device. Different encoder reading system. SysTick interrupts used to keep track of time.
 
 ## Folder description
 - **`LPC_Sample_CPP/`** LPCXpresso code
